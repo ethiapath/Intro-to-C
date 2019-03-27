@@ -8,8 +8,25 @@
     Person should have the fields `name`, `age`, `height`, and `weight`.
 */
 typedef struct Person {
-
+    char *name;
+    int age;
+    int height;
+    int weight;
 } Person;
+
+void mem_copy(void *dest, const void *src, int n)
+{
+    // type cast to char
+    char * chardest = (char*) dest;
+    char * charsrc = (char*) src;
+    // get num chars from bytes
+    int length = n / sizeof(char);
+    // copy values
+    for (int i = 0; i < length; i++) {
+        chardest[i] = charsrc[i];
+    }
+
+}
 
 /*
     Creates an instance of the Person struct that receives all the relevant
@@ -21,7 +38,15 @@ typedef struct Person {
 */
 Person *createPerson(char *name, int age, int height, int weight)
 {
-
+    Person *new_person = malloc(sizeof(Person));
+    new_person->name = malloc(sizeof(char) * strlen(name)); // allocat mem
+    mem_copy(new_person->name, name, sizeof(char) * strlen(name)); // copy constant to allocated mem
+    // new_person->name = persons_name;
+    // printf("Person\'s name: %s \n", new_person->name);
+    new_person->age = age;
+    new_person->height = height;
+    new_person->weight = weight;
+    return new_person;
 }
 
 /*
@@ -30,7 +55,8 @@ Person *createPerson(char *name, int age, int height, int weight)
 */
 void destroyPerson(Person *who)
 {
-
+    free(who->name);
+    free(who);
 }
 
 #ifndef TESTING

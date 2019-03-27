@@ -1,8 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "lib.h"
 
+#include <string.h>
+
+int string_length(char *s)
+{
+  return strlen(s);
+}
+
+// int string_length(char *s)
+// {
+//   char current = s[0];
+//   int len_str = 0;
+//   while (s[len_str] != '\0') {
+//     len_str++;
+//   }
+//   return len_str;
+// }
 /*
     Duplicates the input string by dynamically allocating memory for 
     the duplicate string using `malloc` and then copying the string
@@ -12,7 +27,13 @@
 */
 char *string_dup(char *src)
 {
-
+    char * outstr = (char*) malloc(sizeof(char) * strlen(src)+1);
+    for (int i = 0; i < strlen(src); i++) {
+        outstr[i] = src[i];
+    }
+    outstr[strlen(src) ] = '\0';
+    // printf("dupped str: %s ", outstr);
+    return outstr;
 }
 
 /*
@@ -24,7 +45,15 @@ char *string_dup(char *src)
 */
 void mem_copy(void *dest, const void *src, int n)
 {
-
+    // type cast to char
+    char * chardest = (char*) dest;
+    char * charsrc = (char*) src;
+    // get num chars from bytes
+    int length = n / sizeof(char);
+    // copy values
+    for (int i = 0; i < length; i++) {
+        chardest[i] = charsrc[i];
+    }
 }
 
 /*
@@ -40,7 +69,24 @@ void mem_copy(void *dest, const void *src, int n)
 */
 void *resize_memory(void *ptr, int old_size, int new_size)
 {
-
+    char * old_mem = (char*) ptr;
+    if (new_size > old_size) {
+        char * new_mem = malloc(new_size * sizeof(char));
+        // copy old_mem into new_mem
+        for (int i = 0; i < old_size; i++) {
+            new_mem[i] = old_mem[i];
+        }
+        ptr = new_mem;
+    } else if (new_size < old_size) {
+        // only copy up to new_size
+        char * new_mem = malloc((new_size+1) * sizeof(char));
+        for (int i = 0; i < new_size; i++) { // 
+            new_mem[i] = old_mem[i];
+        }
+        new_mem[new_size+1] = '\0';
+        ptr = new_mem;
+    }
+    return ptr;
 }
 
 #ifndef TESTING
@@ -55,7 +101,7 @@ int main(void)
     int n = sizeof(numbers) / sizeof(numbers[0]);
     int *target = malloc(n * sizeof(int));
     
-    mem_copy(target, numbers, n * sizeof(int));
+    mem_copy(target, numbers, sizeof(numbers));
 
     printf("Copied array: ");
 
@@ -69,6 +115,7 @@ int main(void)
     char *path = string_dup("/students/");
     int url_length = string_length(url);
     int path_length = string_length(path);
+    printf("lengths %d %d \n", url_length, path_length);
     
     int new_length = url_length - 1 + path_length;
     char *new_url = resize_memory(url, url_length, new_length);
